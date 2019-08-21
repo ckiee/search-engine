@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+		<%- include("parts/head") %>
+    </head>
+    <body>
+		<h1>CookieSearch™ - Results</h1>
+		<p><%= results.length %> results found.</p>
+        <form action="/search" method="GET">
+            <input
+                type="text"
+                name="regex"
+                id="regex"
+                placeholder="why is atlas weird?"
+            />
+            <button>search!</button>
+		</form>
+		<div class="results">
+			<%- results.map(r => include("parts/result", {result: r})).join("")%>
+		</div>
+	</body>
+	<style>
+	.results {
+		display: flex;
+		flex-direction: column;
+	}
+	.results * {
+		margin-bottom: 5px;
+	}
+	</style>
+</html>

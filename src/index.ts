@@ -1,6 +1,6 @@
 import Crawler from "./crawler";
 import link from "./link";
 
-const crawler = new Crawler(["https://ronthecookie.me"]);
+const crawler = new Crawler(["https://github.com/jellz?tab=repositories"]);
 
-link.find({title: /ron/})
+// link.find({title: /ron/})

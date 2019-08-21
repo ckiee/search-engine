@@ -20,7 +20,11 @@ export default class Crawler {
             if (this.visitedCache.has(url)) continue;
             const moreUrls = await this.crawl(url);
             this.visitedCache.add(url);
-            this.queue = this.queue.concat(moreUrls || []);
+            if (moreUrls) {
+                this.queue = this.queue.concat(
+                    moreUrls.filter((u) => !this.visitedCache.has(u))
+                );
+            }
             console.log("Queue length now " + this.queue.length);
         }
     }
@@ -56,18 +60,23 @@ export default class Crawler {
             const metas: Map<string, string> = new Map();
             for (let m of $("meta").get()) {
                 if (m.attribs.name && m.attribs.content)
-                    metas.set(m.attribs.name.split(".").join(""), m.attribs.content);
-            }
-            console.log(
-                await LinkModel.create([
-                    { link: url, meta: metas, title: $("title").text() }
-                ])
-            );
+                    metas.set(
+                        m.attribs.name.split(".").join(""),
+                        m.attribs.content
+                    );
+			}
+			const oldLinkMaybe = await LinkModel.findOne({ link: url });
+			if (!oldLinkMaybe) {
+				await LinkModel.create([
+					{ link: url, meta: metas, title: $("title").text() }
+				]);
+			} else console.log("prevented duplicate");
+			console.log("finished processing", url);
             // console.log(links);
             return links;
         } catch (error) {
-			console.error(error);
-			console.error(`I will continue. url=${url}`);
-		}
+            console.error(error);
+            console.error(`I will continue. url=${url}`);
+        }
     }
 }
